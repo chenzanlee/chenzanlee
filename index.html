@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+
+  
+  <title>Walker In the World</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="a personal blog for sharing programming knowledge">
+<meta name="keywords" content="java,web,javascript,node.js,css,html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Walker In the World">
+<meta property="og:url" content="http://w2l.com/index.html">
+<meta property="og:site_name" content="Walker In the World">
+<meta property="og:description" content="a personal blog for sharing programming knowledge">
+<meta property="og:locale" content="default">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Walker In the World">
+<meta name="twitter:description" content="a personal blog for sharing programming knowledge">
+  
+    <link rel="alternate" href="/atom.xml" title="Walker In the World" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Walker In the World</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">Just run or walk,one step by step,finally you will finish the play！</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://w2l.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main">
+  
+    <article id="post-7.1任务的取消" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/05/05/7.1任务的取消/" class="article-date">
+  <time datetime="2018-05-05T09:53:47.204Z" itemprop="datePublished">2018-05-05</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/05/05/7.1任务的取消/">任务的取消</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="7-1任务的取消"><a href="#7-1任务的取消" class="headerlink" title="7.1任务的取消"></a>7.1任务的取消</h1><p>如果外部代码可以将某个活动在其正常完成状态前移到完成状态，那么该活动是可以取消的。有许多原因使得你可能想取消一个活动：  </p>
+<ul>
+<li><strong>用户请求取消</strong>。如在使用图形用户界面应用时，用户通过点击取消按钮或者通过一个类似于jmx的管理接口请求取消； </li>
+<li><strong>限制时间的活动</strong>。一个应用程序在给定的有限时间内寻找问题解空间，然后选择在这段时间内所找到的最好的解决方案。当定时器设定的时间消逝，任何仍在搜索解决方案的任务将取消；</li>
+<li><strong>应用事件</strong>。一个应用通过将拆分问题为一系列不同的子任务来寻找问题空间的不同区域。当一个子任务寻找到解决方案，所有其它仍然在寻找方案的任务将被取消；</li>
+<li><strong>错误</strong>。一个web爬虫寻找相关的网页，将网页或概要数据保存到硬盘上。当一个爬虫任务遇到一个错误（例如，磁盘已满），其它的正在爬数据的任务将被取消，可能会记录它们当前的状态以便稍后重新开始；  </li>
+<li><strong>关闭</strong>。当一个应用或者服务被关闭，对于那些正在被处理的工作及那些等待处理的工作，应当做些什么。优雅的关闭时，那些当前正在执行的任务应该允许他们完成；立即关闭的情况，当前正在执行的任务可能被取消。</li>
+</ul>
+<p>在java中，没有安全的办法来抢占式地停止一个线程，因此也没有安全的办法来抢占式地停止一个任务。在java中，只有协作机制，通过这种方式，任务和请求任务取消的代码遵循一个一致的协议。</p>
+<p>这种协作机制的一种方式是设置一个任务取消被请求的标志，任务周期性地检查该标志；如果任务发现该标志设置了，该任务便提前终结。<a href="">Listing7.1</a>中的PrimeGenerator,它在被取消前一直列举质数，说明了这一技巧。<code>cancel</code>方法设置<code>cancelled</code>标志，主循环在搜索下一个质数前检查这一标志。（为了这一技术能够可靠的工作，<code>cancelled</code>必须设置为<code>volatile</code>修饰的字段，保证对该标志位修改能够被其它线程看到）</p>
+<p><a href="">Listing7.2</a>展示了该类的一个示例用法，让质数生成器PrimeGenerator运行一秒后取消它。该生成器未必在确切的一秒钟后停止，由于在任务被请求取消与主循环检查该任务是否被取消之间可能有一些延迟。<code>cancel</code>方法在一个finally语句块中被调用，从而确保即使对<code>sleep</code>方法的调用被中断了，质数生成器仍然会被取消。如果<code>cancel</code>方法不被调用，该寻找质数的线程将一直运行下去，消耗cpu时间片，阻止java虚拟机进程的退出。</p>
+<p>一个想要能够被取消的任务必须有一个取消政策，该政策指明了怎样取消，何时取消，取消时做些什么——其它代码可以怎样请求取消该任务，该任务什么时候检查取消被请求了，该任务该做些什么来响应一个取消请求。</p>
+<p>考虑一个停止支付现金的真实例子。银行有关于如何提交一个停止支付请求，在处理这种请求时需要保证的怎样的响应性，当一次支付被真正取消时该遵循怎样的步骤（诸如通知其它涉及到这次交易的银行以及根据支付者的账户评估一个费用），这些步骤及保证组成了支付的取消原则。</p>
+<h3 id="Listting7-1-使用一个volatile字段来持有取消状态"><a href="#Listting7-1-使用一个volatile字段来持有取消状态" class="headerlink" title="Listting7.1 使用一个volatile字段来持有取消状态"></a>Listting7.1 使用一个volatile字段来持有取消状态</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">@ThreadSafe</span><br><span class="line">public class PrimeGenerator implements Runnable&#123;</span><br><span class="line">	@GuardedBy(“this”) </span><br><span class="line">	private final List&lt;BigInteger&gt; primes=new ArrayList&lt;BigInteger&gt;();</span><br><span class="line">	private volatile cancelled;</span><br><span class="line">	public void run()&#123;</span><br><span class="line">		BigInteger p=BigInteger.ONE;</span><br><span class="line">		while(!cancelled)&#123;</span><br><span class="line">			p=p.nextProbablePrime();</span><br><span class="line">			synchronized(this)&#123;</span><br><span class="line">				primes.add(p);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	public void cancel()&#123;</span><br><span class="line">		cancelled=true;</span><br><span class="line">	&#125;</span><br><span class="line">	public synchronized List&lt;BigInteger&gt; get()&#123;</span><br><span class="line">		return new ArrayList&lt;BigInteger&gt;(primes);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="Listing7-2-一秒钟内生成的质数"><a href="#Listing7-2-一秒钟内生成的质数" class="headerlink" title="Listing7.2 一秒钟内生成的质数"></a>Listing7.2 一秒钟内生成的质数</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">List&lt;BigInteger&gt; aSecondOfPrimes() throws InterruptedException&#123;</span><br><span class="line">	PrimeGenerator generator=new PrimeGenerator();</span><br><span class="line">	new Tnread(generator).start();</span><br><span class="line">	try&#123;</span><br><span class="line">		SECONDS.sleep(1);</span><br><span class="line">	&#125;finally&#123;</span><br><span class="line">		generator.cancel();</span><br><span class="line">	&#125;</span><br><span class="line">	return generator.get();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>PrimeGenerator使用一个简单的取消政策：客户端代码通过调<code>cancel</code>方法来请求取消，PrimeGenerator每当一个质数找到就检测是否取消，当它检测到取消请求时就退出。</p>
+<h2 id="7-1-1中断"><a href="#7-1-1中断" class="headerlink" title="7.1.1中断"></a>7.1.1中断</h2><p>质数生成器中的取消机制最终将导致寻找质数的任务退出，虽然这可能会要一小会时间。然而，如果一个使用这种方式的任务调用了一个像BlockingQueue的<code>put</code>方法这样的阻塞方法，我们可能有一个更严重的问题——任务可能永远不会检查取消标志，因此可能永远不会终止。</p>
+<p><a href="">Listing1.3</a>中的BrokenPrimeProducer说明了这个问题。生产者线程产生质数并将它们存放在一个阻塞队列中。如果该生产者产生质数的速度大于消费者从队列中取出质数的速度，该队列最终会填满，<code>put</code>方法将被阻塞住。如果消费者试图取消生产者任务而此时生产者正阻塞在<code>put</code>方法时，会发生什么？它可以调用<code>cancel</code>方法来将<code>cancelled</code>标志设置为<code>true</code>——但是生产者将永远不会检查这一标志，因为它将永远不会从被阻塞的<code>put</code>方法中解脱出来（因为消费者已经停止从队列中取出质数）。</p>
+<p>我们在第五章曾指出，某些阻塞的库方法支持中断。线程中断是一种协作机制，一个线程用线程中断来向另一个线程发出信号，告知该线程它应该在它方便时，或者如果它愿意的话，停止它现在手头正在做的，做些其它别的事。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">虽然java API和java语言规范中没有将中断与任何具体的取消绑在一起，然而，实际上，使用中断来做取消之外的任何事都是脆弱的，并且在大的应用中很难维持。</span><br></pre></td></tr></table></figure></p>
+<p>每个线程都有一个<code>boolean</code>类型的<code>interrupted</code>状态字段；中断一个线程会把该字段设置为<code>true</code>.正如<a href="">Listing7.4</a>所示,线程类包含有中断线程和查询线程中断状态的方法。<code>interrupt</code>方法中断目标线程的状态，<code>isInterrupted</code>方法返回目标字段的中断状态。拙劣的命名为<code>interrupted</code>的静态方法清空当前线程的中断状态，返回它前一次的值，该方法是清空中断状态的唯一方式。</p>
+<p>像<code>Thread.sleep</code>和<code>Object.wait</code>这样的阻塞式库方法试图去检测一个线程什么时候被请求中断，然后早早地返回。它们通过清除中断状态字段值，抛出一个被中断异常这种方式来响应中断，表明阻塞式的操作由于中断而提前完成。Java虚拟机没有对一个阻塞式方法多快检测中断作出保证，但实际上，对中断的检测通常相当快。</p>
+<h3 id="Listing7-3-不可靠的取消，导致Producers卡在了阻塞式操作中。不要这么做。"><a href="#Listing7-3-不可靠的取消，导致Producers卡在了阻塞式操作中。不要这么做。" class="headerlink" title="Listing7.3 不可靠的取消，导致Producers卡在了阻塞式操作中。不要这么做。"></a>Listing7.3 不可靠的取消，导致Producers卡在了阻塞式操作中。不要这么做。</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">class BrokenPrimeProducer extends Thread&#123;</span><br><span class="line">	private final BlockingQueue&lt;BigInteger&gt; queue;</span><br><span class="line">	private volatile Boolean cancelled=false;</span><br><span class="line">	BrokenPrimeProducer(BlockingQueue&lt;BigInteger&gt; queue)&#123;</span><br><span class="line">		this.queue=queue;</span><br><span class="line">	&#125;</span><br><span class="line">	public void run()&#123;</span><br><span class="line">		try&#123;</span><br><span class="line">			BigInteger p=BigInteger.ONE;</span><br><span class="line">			while(!cancelled)&#123;</span><br><span class="line">				queue.put(p=p.nextProbablePrime());</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;catch(InterruptedException cousumed)&#123;</span><br><span class="line">		&#125;		</span><br><span class="line">	&#125;</span><br><span class="line">	public void cancel()&#123;</span><br><span class="line">		cancelled=true;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void consumePrimes() throws InterruptedException&#123;</span><br><span class="line">	BlockingQueue&lt;BigInteger&gt; primes=…;</span><br><span class="line">	BrokenPrimeProducer producer=new BrokenPrimeProducer(primes);</span><br><span class="line">	producer.start();</span><br><span class="line">	try&#123;</span><br><span class="line">		while(needMorePrimes())&#123;</span><br><span class="line">			consume(primes.take());</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;finally&#123;</span><br><span class="line">		producer.cancel();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="Listing-7-4-Thread类中中断相关的方法"><a href="#Listing-7-4-Thread类中中断相关的方法" class="headerlink" title="Listing 7.4. Thread类中中断相关的方法"></a>Listing 7.4. Thread类中中断相关的方法</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">public class Thread&#123;</span><br><span class="line">public void interrupt()&#123;…&#125;</span><br><span class="line">public boolean isInterrupted()&#123;…&#125;</span><br><span class="line">public static Boolean interrupted()&#123;…&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果一个线程在未阻塞时被中断，它的<code>interrupted</code>状态字段会被设置，由正在被取消的活动来检查<code>interrupted</code>字段发现中断。采用这种方式，中断是粘性的——如果它没有触发一个<code>InterruptedException</code>，中断的证据将一直保留直到某人谨慎地清除掉被中断状态。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">调用`interrupt`方法未必让目标线程停止正在做的事情；它仅仅是传递一个信息：中断被请求了。</span><br><span class="line">```	</span><br><span class="line">关于中断的一个更好的看法是它不是真正地中断一个正在运行的线程，它只是请求线程在下一个合适的时机中断自身（这些时机叫做取消点）。一些方法，诸如`wait,sleep,join`，认真对待该请求，当它们接收到一个中断请求或在方法入口遇到一个已经设置的`interrrupted`状态字段时抛出一个异常。表现好的方法可能完全忽略中断请求只要他们将中断请求保留以便调用代码能够对该中断请求做些什么。槽糕的方法吞下中断请求，因此使得调用栈更高层的代码没有机会对该中断请求做些什么。</span><br><span class="line">	</span><br><span class="line">静态的`interrupted`方法需要谨慎使用，因为它清空了当前线程的中断状态字段的值。如果你调用`interrupted`方法，并返回`true`,除非你打算吞下该中断请求，否则你应该对此做些什么——或者抛出被中断异常，或者像94页[Listing5.10]()那样，再次调用`interrupt`方法来恢复`interrupted`状态字段的值。</span><br><span class="line">	</span><br><span class="line">BrokenPrimeProducer展示了定制的取消机制是如何并不总能够与阻塞式的库方法很好地协作。如果你编码你的任务来对中断请求作出响应，你可以利用众多的库方法提供的中断支持。</span><br><span class="line">```	</span><br><span class="line">中断通常是实现取消的最合理的方式。</span><br></pre></td></tr></table></figure></p>
+<p>BrokenPrimeProducer可以很容易修复，通过使用中断取代那种用一个<code>boolean</code>类型的标志字段来请求取消的方式，同时也简化了代码，如下<a href="">Listing7.5</a>所示。</p>
+<h3 id="Listing7-5使用中断来取消"><a href="#Listing7-5使用中断来取消" class="headerlink" title="Listing7.5使用中断来取消"></a>Listing7.5使用中断来取消</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">class PrimeProducer extends Thread&#123;</span><br><span class="line">	private final BlockingQueue&lt;BigInteger&gt; queue;</span><br><span class="line">	PrimeProducer(BlockingQueue&lt;BigInteger&gt; queue)&#123;</span><br><span class="line">		this.queue=queue;</span><br><span class="line">	&#125;</span><br><span class="line">	public void run()&#123;</span><br><span class="line">		try&#123;</span><br><span class="line">			BigInteger p=BigInteger.ONE;</span><br><span class="line">			while(!Thread.currentThread().isInterrupted())&#123;</span><br><span class="line">				queue.put(p=p.nextProbablePrime());</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;catch(InterruptedException consumed)[</span><br><span class="line">			/*Allow thread to exit*/</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	public void cancel()&#123;</span><br><span class="line">		interrupt();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="7-1-2-线程中断政策"><a href="#7-1-2-线程中断政策" class="headerlink" title="7.1.2 线程中断政策"></a>7.1.2 线程中断政策</h2><p>线程应该有一个中断执行的政策，如同任务应该有一个取消政策一样。一个中断政策决定了一个线程如何解释（看待）一个中断请求——当检测到一个中断请求时，它做些什么（如果需要的话），相对于一次中断，它的哪些工作应该看作是原子的（或者说，它的哪些工作是不可以被中断的，需要被当做一个整体），它对中断的响应速度如何。</p>
+<p>最合理的中断政策是某种形式上的线程级别或者服务级别的取消：尽可能快地退出（满足实际的实践需求），做一些必要的清理，可能会通知一些拥有该线程的实体该线程正在退出。虽然可以建立一些别的中断政策，诸如暂停或继续一个服务，但是使用非标准的中断政策的线程或线程池可能局限于只能传递那些清楚这些线程或线程池所使用的中断政策而编写的任务以供执行。    </p>
+<p>区分任务和线程各自应该如何对中断做出反应是非常重要的。一个中断请求可能有不止一个的期望接受者——中断一个线程池中的工作线程可能意味着既要取消该工作线程当前正在执行的任务，同时还要关闭改工作线程。</p>
+<p>任务不是在他们自身拥有的线程中执行，它们向一个诸如线程池这样的服务租借线程来执行任务。不拥有该线程的代码（例如，就线程池而言，任何线程池实现之外的代码）要注意保留线程的中断状态，这样拥有该线程的代码最终能够对此作出响应，即使客户代码也对此中断作出了一些响应动作。（如果你为某人照看房子，你不能将在他们离开后收到的邮件扔掉——你将它们保管好，让他们回来后处理这些邮件，即使你确实看了他们的杂志。）</p>
+<p>这也解释了为什么大多数类库阻塞方法仅仅简单地抛出<code>InterruptedException</code>作为对中断的响应。因为它们将不会执行在一个它们自身拥有的线程中，所以它们实现了对于任务或类库代码来说最合理的取消政策：尽快退出，将中断消息传递给调用者以便调用栈更高层的代码能够采取进一步的动作。</p>
+<p>当任务觉察到一个中断请求时，它不必立即放弃一切——它可以选择记住它被中断了，推迟到一个更适宜的时机结束它正在执行的任务，然后抛出一个<code>InterruptedException</code>或者其他的指示中断的方式。这一技巧可以避免当一个正在更新中的活动被中断时，数据结构被损坏。</p>
+<p>任务不应假设它的执行线程的中断政策，除非它被显式的设计运行在一个拥有特定的中断政策的服务中。不管任务将中断视为取消还是采取一些其他的行动，它都应该注意将正在执行的线程的中断状态保留。如果它不是简单地将<code>InterrruptedException</code>传播给它的调用者，他应该在捕获<code>InterruptedException</code>后恢复中断状态：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Thread.currentThread.interrupt();</span><br></pre></td></tr></table></figure></p>
+<p>正如任务代码不应假设中断对于执行该任务的线程意味着什么，和取消相关的代码不应该对任意线程的中断政策作出假设。只有线程的所有者能够中断线程；线程的所有者可以以一种恰当的取消机制来封装线程的中断原则方面的内容，例如提供一个<code>shutdown</code>方法。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">因为每个线程有各自的中断政策，你不应该中断一个线程除非你知道中断对于那个线程意味着什么。</span><br><span class="line">```	</span><br><span class="line">批判家们嘲笑java的中断机制，因为它不能提供一个抢占式的中断能力，而是强迫开发者来处理`InterruptedException`。然而，推迟中断请求的能力使得开发者们能够设计灵活的，对于应用来说在响应和健壮性方面适宜的中断原则。</span><br><span class="line">	</span><br><span class="line">## 7.1.3 对中断的响应</span><br><span class="line"></span><br><span class="line">在[5.4部分]()提到，当你调用一个诸如`Thread.sleep`或`BlockingQueue.put`方法这样可以被中断的阻塞式方法时，有两种可行的处理被中断异常的策略：</span><br><span class="line">	</span><br><span class="line">	</span><br><span class="line"></span><br><span class="line">- 传播该异常（可能在完成特定于该任务的相关清理工作之后），使你的方法也成为一个可被中断的阻塞式方法；</span><br><span class="line">	</span><br><span class="line">	</span><br><span class="line"></span><br><span class="line">- 恢复中断字段的状态以便调用栈更高层的代码能够处理该中断请求;</span><br><span class="line">	</span><br><span class="line">传播被中断异常可以简单地添加被中断异常到throws子句。像下面的[Listing7.6]()的getNextTask方法显示的那样：</span><br><span class="line">###Listing 7.6 传播被中断异常给调用者</span><br></pre></td></tr></table></figure></p>
+<p>BlockingQueue<task> queue;<br>    …<br>    public Task getNextTask() throws InterruptedException{<br>        return queue.take();<br>    }<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">如果你不想或者不能传播被中断异常（也许是由于你的任务通过Runnable接口来定义的），你需要找到另一种方法来保存该中断请求。标准的做法是通过再次调用`interrupt`来恢复该中断状态。你不应该捕获InterrruptedException，然后在捕获块（catch）中什么也不做，咽下该InterruptedException，除非你的代码确实是在实现一个线程的中断政策。PrimeProducer吞下了该中断，但是这样做是因为知道线程将要终结，因此调用栈上没有更高层代码需要知道该中断了。大多数代码不知道它将运行于那个线程，因此应该保存该中断状态。</span><br></pre></td></tr></table></figure></task></p>
+<p>只有实现线程的中断原则的代码可以吞下一个中断请求。通用的任务或者库代码绝不能吞下中断请求。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">不支持取消但仍然调用可以被中断的阻塞方法的那些活动将不得不在一个循环中调用这些可以被中断的阻塞方法，当中断被检测到时，重新执行循环体中的代码。在这种情况下，它们应该通过局部变量保存中断状态，然后在方法返回之前恢复该中断状态，像[Listing7.7]()所展示的那样，而不是一捕获`InterruptedException`就调用`interrupt`方法来恢复中断状态。过早地设置被中断状态可能导致一个无限死循环，因为大多数可以被中断的阻塞方法在进入该方法时检查被中断状态，如果该字段被设置为true的话立即抛出线程被中断异常InterruptedException.(可被中断的方法通常为了尽可能快地对中断作出响应，在阻塞或者做任何重要的工作前审查中断状态)</span><br><span class="line"></span><br><span class="line">如果你的代码不能调用可被中断的阻塞方法，它仍然可以通过在任务代码中审查当前线程的被中断状态来对中断作出响应。需要在效率和响应性之间做取舍来设置审查频率。如果你有高响应性方面的要求，你不能调用那些潜在的可能需要运行很长时间而它们自身不能对中断作出响应的方法，潜在地限制了你对一些库方法的调用。</span><br><span class="line">	</span><br><span class="line">取消可能牵涉到除了中断状态之外的情形；中断可以用来获得被中断线程的注意，那些被正在调用中断方法的线程保存在其他地方的信息可以用来为被中断的线程提供更进一步的指示。（访问这些信息时，请确保使用了同步机制synchronization）。</span><br><span class="line">### Listing7.7 在退出之前恢复中断的不可取消的任务</span><br><span class="line">```	</span><br><span class="line">public Task getNextTask(BlockingQueue&lt;Task&gt; queue)&#123;</span><br><span class="line">		boolean interrupted=false;</span><br><span class="line">		try&#123;</span><br><span class="line">			while(true)&#123;</span><br><span class="line">				try&#123;</span><br><span class="line">					return queue.take();</span><br><span class="line">				&#125;catch(InterruptedException e)&#123;</span><br><span class="line">					interrupted=true;</span><br><span class="line">					//失败并重新尝试</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;finally&#123;</span><br><span class="line">			if(interrupted)&#123;</span><br><span class="line">				Thread.currentThread().interrupt();</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure></p>
+<p>例如，当一个ThreadPoolExecutor拥有的工作线程检测到中断请求，它会查看线程池是否正在被关闭。如果是的话，它会在结束前执行一些线程池的清理工作；否则它会创建一个新的线程来维持线程池的期望大小。</p>
+<p>##7.1.4例子：TimedRun<br>很多问题的解决可能需要花费无限长的时间（例如：枚举所有的质数）；对于其他的问题，答案可能很快被找到也可能耗费很久。在这些场景中，能够说“花费至多十分钟来寻找答案”或“在十分钟内列举出你知道的所有答案”可能很有用。</p>
+<p><a href="">Listing7.2</a>中的aSecondOfPrimes方法开启了一个PrimeGenerator(质数生成器)线程，然后在一秒钟之后中断了它。尽管该PrimeGenerator可能会花费不止一秒钟来停止，它最终会察觉该中断请求并停止，以允许线程终结。但是执行一项任务的另一方面是你想要查明该任务是否会抛出一个异常。如果PrimeGenerator在设置的超时时间消逝前抛出一个未受检的异常，它可能不被察觉，因为该质数生成器在一个分开的未显示地处理异常的线程中执行。</p>
+<p><a href="">Listing7.8</a>展示了在给定的时间内运行一个任意的Runnable的一个尝试。它在调用线程中运行任务，然后安排一个取消任务来在指定的时间间隔后中断它。这解决了任务中抛出非受检异常的问题，因为它们可以被方法timedRun的调用者捕获。</p>
+<p>这是一种即吸引人又简单的方式，但是它违背了规则：你应该在中断一个线程之前清楚该线程的中断原则。既然timedRun可能被任意一个线程调用，它不可能清楚调用它的线程的中断原则。如果任务在设定的超时时间前完成，在timedRun已经返回到它的调用者后，那个用来中断timedRun被调用的线程的取消任务就会跑偏。我们不知道当那种情况发生时会执行什么代码，但是结果不可能会是好的。（）</p>
+<h3 id="Listing-7-8-在一个借来的线程上安排一个中断。不要这么做。"><a href="#Listing-7-8-在一个借来的线程上安排一个中断。不要这么做。" class="headerlink" title="Listing 7.8 在一个借来的线程上安排一个中断。不要这么做。"></a>Listing 7.8 在一个借来的线程上安排一个中断。不要这么做。</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">private static final ScheduledExecutorService cancelExec=...;</span><br><span class="line">public static void timedRun(Runnable r,long timeout,TimeUnit unit)&#123;</span><br><span class="line">	final Thread taskThread=Thread.currentThread();</span><br><span class="line">	cancelExec.schedule(new Runnable()&#123;</span><br><span class="line">				public void run()&#123;</span><br><span class="line">					taskThread.interrupt();	</span><br><span class="line">				&#125;</span><br><span class="line">			    &#125;,timeout,unit);</span><br><span class="line">	r.run();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>此外，如果任务不响应中断的话，timedRun方法将直到任务结束才返回，这可能在期望的时间过去之后很久（甚至可能不会返回）。一个timed run服务在指定的时间过去之后不能返回很可能惹恼它的调用者。</p>
+<p><a href="">Listing 7.9</a>解决了aSecondOfPrimes的异常处理问题和之前的尝试带来的问题。为了运行该任务而被创建的线程可以有它自己的执行原则，即使该任务不能对中断作出响应，timed run方法仍然可以返回到它的调用者。在启动该任务线程后，timedRun方法调用新创建的线程的timed join方法。当join方法返回后，它会检查异常是否是从任务代码中抛出来的，如果是的话，在调用timedRun方法的线程中重新抛出该异常。保存的Throwable在这两个线程中共享，因此它被声明为volatile字段，从而能够安全地从任务线程发布到timedRun线程。</p>
+<p>该版本解决了之前的例子中的问题，但是因为它的实现依赖一个timed join方法，它便有join方法带来的不足：我们不知道控制权返回调用线程是因为被调用join方法的线程的正常退出还是因为join方法超时。</p>
+<h3 id="Listing7-9-中断在一个专门执行该任务的线程中的任务"><a href="#Listing7-9-中断在一个专门执行该任务的线程中的任务" class="headerlink" title="Listing7.9. 中断在一个专门执行该任务的线程中的任务"></a>Listing7.9. 中断在一个专门执行该任务的线程中的任务</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">public static void timedRun(final Runnable r,long timeout,TimeUnit unit) throws InterrputedException&#123;</span><br><span class="line">	class RethrowableTask implements Runnable&#123;</span><br><span class="line">		private volatile Throwable t;</span><br><span class="line">		public void run()&#123;</span><br><span class="line">			try&#123;</span><br><span class="line">				r.run()</span><br><span class="line">			&#125;catch(Throwable t)&#123;</span><br><span class="line">				this.t=t;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		void rethrow()&#123;</span><br><span class="line">			if(t!=null)&#123;</span><br><span class="line">				throw launderThrowable(t);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">		</span><br><span class="line">	RethrowableTask task=new RethrowableTask();</span><br><span class="line">	final Thread taskThread=new Thread(task);</span><br><span class="line">	taskThread.start();</span><br><span class="line">	cancelExec.schedule(new Runnable()&#123;</span><br><span class="line">		taskThread.interrupt();</span><br><span class="line">	&#125;,timeout,unit);</span><br><span class="line">	taskThread.join(unit.toMillis(timeout));</span><br><span class="line">	task.rethrow();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="7-1-5通过Future来取消任务"><a href="#7-1-5通过Future来取消任务" class="headerlink" title="7.1.5通过Future来取消任务"></a>7.1.5通过Future来取消任务</h2><p>我们已经使用过一种用来管理任务的生命周期，处理异常，和取消任务的抽象——Future.遵循通用的原则：不要重复造轮子，相比于自己创造一个，使用类库中已经存在的类更好。让我们使用Future和任务执行框架来构建timeRun方法.</p>
+<p>ExecutorService接口的submit方法会返回一个Future实例来描述任务。Future接口有一个cancel方法，该方法接受一个boolean类型的参数，mayInterruptIfRunning,返回一个值表明关于取消的尝试是否成功（这仅是告诉你它是否能发送中断请求，而不是任务是否检测到该中断请求并对该中断请求做些什么）。当mayInterruptIfRunning为true并且任务当前正在某个线程中运行时，那么那个线程将被中断。将该参数设置为false意味着“如果该任务还未开始，不要运行该任务”，因此应该被用于那些未设计处理中断的任务。</p>
+<p>既然除非你知道线程的中断原则，否则不要中断它。那么什么时候可以使用参数true来调用cancel方法？标准的Executor实现创建的任务执行线程实现了一个中断原则，该中断原则允许任务使用中断来取消，所以当它们运行在标准Executor中时，通过设置mayInterruptIfRunning，用它们的Futures来取消任务是安全的。你不应该在试图取消一个任务时，采取直接中断一个线程池中的线程的方式，因为你不知道当中断请求发出时，什么任务正在运行中——只能通过Future的cancel方法来做这。这也是编程任务将中断视作一个取消任务的请求的另一原因：这样他们可以通过它们的Futures来取消。<br><a href="">Listing 7.10</a>展示了timedRun方法的另一个版本，该版本将任务提交给ExecutorService，通过Future的设定超时的get方法获取结果。如果get方法伴随着TimeOutException而终止，该任务通过它的Future来取消。（为了简化编码，这个版本在一个finally块中无条件的调用Future的cancel方法，利用了一个事实：无法取消一个已经完成的任务）如果潜在的计算在取消任务之前抛出一个异常，它将从timedRun方法中重新抛出，这是让调用者处理异常的最方便的方法。<a href="">Listing 7.10</a>也展示了另一个好的实践：取消那些结果不再需要的任务。（128页的<a href="">Listing 6.13</a>和132页的<a href="">Listing 6.16</a>也使用到这一技术）</p>
+<h3 id="Listing7-10-使用Future取消任务"><a href="#Listing7-10-使用Future取消任务" class="headerlink" title="Listing7.10. 使用Future取消任务"></a>Listing7.10. 使用Future取消任务</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">public static void timedRun(Runnable r,long timeout,TimeUnit unit) throws InterruptedException&#123;</span><br><span class="line">	Future&lt;?&gt; task=taskExec.submit(r);</span><br><span class="line">	try&#123;</span><br><span class="line">		task.get(timeout,unit);</span><br><span class="line">	&#125;catch(TimeoutException e)&#123;</span><br><span class="line">		//task will be cancelled below</span><br><span class="line">	&#125;catch(ExecutionException e)&#123;</span><br><span class="line">		//任务中抛出的异常，重新抛出</span><br><span class="line">		throw launderThrowable(e.getCause());</span><br><span class="line">	&#125;finally&#123;</span><br><span class="line">		//Harmless if task already completed</span><br><span class="line">		task.cancel(true);//interrupt if running</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">当Future的get方法抛出InterruptedException或者TimeoutException，并且你知道程序不再需要改任务的结果时，调用Future.cancel方法来取消任务。</span><br></pre></td></tr></table></figure>
+<h2 id="7-1-6-处理不能被中断的阻塞"><a href="#7-1-6-处理不能被中断的阻塞" class="headerlink" title="7.1.6. 处理不能被中断的阻塞"></a>7.1.6. 处理不能被中断的阻塞</h2><p>大多数阻塞的类库方法会通过及早地返回并抛出一个InterruptedException来响应中断，这使得构造响应取消的任务变得简单多了。然而，不是所有的阻塞方法或者阻塞机制都能响应中断；如果一个线程阻塞来执行同步的套接字I/O或者等待获取一个内在锁，中断除了设置线程的中断状态外，没有其它作用。有时候我们可以让阻塞在不可中断的活动中的线程停止通过类似于中断的方式，但是这要求对该线程为什么阻塞有更好的认识。</p>
+<ul>
+<li><strong>java.io中的同步的socket I/O</strong>在服务端应用中阻塞性I/O的常见形式是向一个套接字Socket中读或者写。不幸的是，InputStream和OutputStream中的read和write方法无法响应中断，但是关闭潜在的socket能够使任何阻塞在read或者write方法中的线程抛出一个SocketException.</li>
+</ul>
+<ul>
+<li><strong>java.nio中的同步I/O</strong>中断一个正在等待一个可被中断的通道的线程将导致该线程抛出一个ClosedByInterruptException并关闭该通道（同时也将会导致别的阻塞在该通道的线程抛出ClosedByInterruptException）.关闭一个InterruptibleChannel导致阻塞在该通道操作的线程抛出AsynchronousCloseException。大多数标准的Channels实现了InterruptibleChannel接口。</li>
+</ul>
+<ul>
+<li><strong>异步的I/Owith Selector</strong>如果一个线程阻塞在Selector.select(in java.nio.channels),调用close或者wakeup方法将导致它提前返回。</li>
+</ul>
+<ul>
+<li><strong>Lock acquisition</strong>.如果一个线程因为等待获取一个内在锁而阻塞的话，没有任何方法可以让它停止，除了确保它最终会获得那个锁，执行到你用其他方式获得该线程的注意的代码处。然而，显式的锁类提供了lockInterruptibly方法，该方法允许你等待获取一个锁的同时，仍然能够响应中断。——见<a href="">13章</a></li>
+</ul>
+<p><a href="">Listing 7.11</a>中的ReaderThread展示了一种封装非标准取消的技术。</p>
+<h3 id="Listing-7-11-通过覆写interrupt方法将非标准取消方式封装到线程中"><a href="#Listing-7-11-通过覆写interrupt方法将非标准取消方式封装到线程中" class="headerlink" title="Listing 7.11. 通过覆写interrupt方法将非标准取消方式封装到线程中"></a>Listing 7.11. 通过覆写interrupt方法将非标准取消方式封装到线程中</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">public class ReaderThread extends Thread&#123;</span><br><span class="line">	private final Socket socket;</span><br><span class="line">	private final InputStream in;</span><br><span class="line">	public ReaderThread(Socket socket) throws IOException&#123;</span><br><span class="line">		this.socket=socket;</span><br><span class="line">		this.in=socket.getInputStream();</span><br><span class="line">	&#125;</span><br><span class="line">	public void interrupt()&#123;</span><br><span class="line">		try&#123;</span><br><span class="line">			socket.close();	</span><br><span class="line">		&#125;catch(IOException ignored)&#123;</span><br><span class="line">		&#125;finally&#123;</span><br><span class="line">			super.interrupt();</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	public void run()&#123;</span><br><span class="line">		try&#123;</span><br><span class="line">			byte[] buf=new byte[BUFSZ];</span><br><span class="line">			while(true)&#123;</span><br><span class="line">				int count=in.read(buf);</span><br><span class="line">				if(count&lt;0)&#123;</span><br><span class="line">					break;</span><br><span class="line">				&#125;else if(count&gt;0)&#123;</span><br><span class="line">					processBuffer(buf,count);</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">			</span><br><span class="line">		&#125;catch(IOException e)&#123;</span><br><span class="line">			/*Allow thread to exit */</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>ReaderThread管理一个单个的socket连接，从该socket中同步读取，将接受到的数据传递给processBuffer方法。为了实现终止用户连接或关闭服务器，ReaderThread覆写了interrupt方法来发送一个标准的中断请求同时关闭潜在的socket;因此中断ReaderThread将使得该线程停止它正在做的无论它是阻塞在读方法中还是一个可被中断的blocking方法中。</p>
+<h2 id="7-1-7-使用newTaskFor方法来封装非标准取消方式"><a href="#7-1-7-使用newTaskFor方法来封装非标准取消方式" class="headerlink" title="7.1.7.使用newTaskFor方法来封装非标准取消方式"></a>7.1.7.使用newTaskFor方法来封装非标准取消方式</h2><p>ReaderThread类中使用的用来封装非标准取消方式的技术可以使用在java6中ThreadPoolExecutor类中新增的newTaskFor钩子方法来优化。当一个Callable被提交给一个ExecutorService，submit方法返回一个Future实例，该实例能够用来取消任务。newTaskFor钩子方法是一个工厂方法，用来创建代表任务的Future实例。该方法返回一个RunnableFuture实例，RunnableFuture是一个同时继承了Future和Runnable接口的接口（FutureTask类实现了该接口）。</p>
+<p>定制任务的Future使得你可以覆写Future的cancel方法。定制的cancellation代码可以在任务取消时执行日志记录或者收集数据，也可以用来取消那些无法响应中断的活动。ReaderThread类通过覆写interrupt方法来封装对使用socket的线程的取消。</p>
+<p><a href="">Listing 7.12</a>定义了一个CancellableTask接口，该接口继承了Callable接口，并增加了一个cancel方法和一个newTask工厂方法来构建RunnableFuture。CancellingExecutor类继承了类ThreadPoolExecutor，并覆写了newTaskFor()方法来允许CancellableTask创建它自己的Future。</p>
+<h3 id="Listing-7-12-使用newTaskFor方法来封装对一个任务的取消"><a href="#Listing-7-12-使用newTaskFor方法来封装对一个任务的取消" class="headerlink" title="Listing 7.12 使用newTaskFor方法来封装对一个任务的取消"></a>Listing 7.12 使用newTaskFor方法来封装对一个任务的取消</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line">public interface CancellableTask&lt;T&gt; extends Callable&lt;T&gt;&#123;</span><br><span class="line">	void cancel();</span><br><span class="line">	RunnableFuture&lt;T&gt; newTask();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">@ThreadSafe</span><br><span class="line">public class CancellingExecutor extends ThreadPoolExecutor&#123;</span><br><span class="line">	...</span><br><span class="line">	protected &lt;T&gt; RunnableFuture&lt;T&gt; newTaskFor(Callable&lt;T&gt; callable)&#123;</span><br><span class="line">		if(callable instanceof CancellableTask)&#123;</span><br><span class="line">			return ((CancellableTask&lt;T&gt;)callable).newTask();	</span><br><span class="line">		&#125;esle&#123;</span><br><span class="line">			return super.newTaskFor(callable);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;	</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public abstract class SocketUsingTask&lt;T&gt; implements CallcellableTask&lt;T&gt;&#123;</span><br><span class="line">	@GuardedBy(&quot;this&quot;)</span><br><span class="line">	private Socket socket;</span><br><span class="line">	protected synchronized void setSocket(Socket s)&#123;</span><br><span class="line">		socket=s;</span><br><span class="line">	&#125;</span><br><span class="line">	public synchronized void cancel()&#123;</span><br><span class="line">		try&#123;</span><br><span class="line">			if(socket!=null)&#123;</span><br><span class="line">				socket.close();</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;catch(IOException ignored)&#123;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	public RunnableFuture&lt;T&gt; newTask()&#123;</span><br><span class="line">		return new FutureTask&lt;T&gt;(this)&#123;</span><br><span class="line">			public boolean cancel(boolean mayInterruptIfRunning)&#123;</span><br><span class="line">				try&#123;</span><br><span class="line">					SocketUsingTask.this.cancel();</span><br><span class="line">				&#125;finally&#123;</span><br><span class="line">					return super.cancel(mayInterruptIfRunning);</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>SocketUsingTask实现了CancellableTask接口，并定义了Future的cancel方法来关闭socket,也调用了super.cancel方法。如果SocketUsingTask通过它的Future类实例来取消，socket被关闭，正在执行的线程被中断。这增加了该任务对取消的响应：它不计能安全的调用可被中断的阻塞方法，也能调用阻塞的socket I/O方法，同时能够保留对中断的响应能力。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://w2l.com/2018/05/05/7.1任务的取消/" data-id="cjgt7nwt10004i4g5tk9cs92w" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-7.4关闭java虚拟机" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/05/05/7.4关闭java虚拟机/" class="article-date">
+  <time datetime="2018-05-05T09:53:47.195Z" itemprop="datePublished">2018-05-05</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/05/05/7.4关闭java虚拟机/">java虚拟机的关闭</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="7-4-java虚拟机的关闭"><a href="#7-4-java虚拟机的关闭" class="headerlink" title="7.4.java虚拟机的关闭"></a>7.4.java虚拟机的关闭</h1><p>java虚拟机可能以有序的方式关闭，也可能突然的关闭。当最后一个普通的（非守护线程）线程终止时发起有序的关闭，可能通过调用<code>System.exit</code>，或者通过其他一些特定于平台的方式（诸如发送一个<code>SIGINT</code>或者敲击<code>Ctrl-C</code>）。尽管这是关闭java虚拟机的标准同时也是推荐的方式，java虚拟机仍然可能由于调用<code>Runtime.halt</code>或者通过操作系统杀死<code>jvm</code>进程的方式而突然关闭（例如发送一个<code>SIGKILL</code>指令）。</p>
+<h2 id="7-4-1关闭虚拟机的钩子方法"><a href="#7-4-1关闭虚拟机的钩子方法" class="headerlink" title="7.4.1关闭虚拟机的钩子方法"></a>7.4.1关闭虚拟机的钩子方法</h2><p>有序关闭时，java虚拟机会启动所有已经注册的关闭钩子。关闭钩子是那些通过<code>Runtime.addShutdownHook</code>注册的未启动的线程。java虚拟机无法保证关闭钩子的启动顺序。如果任何应用线程（守护线程或者非守护线程）在应用关闭时仍然在运行，它们将与关闭程序并发运行。当所有的关闭钩子方法完成，如果此时<code>runFinalizersOnExit</code>设置为真的话，java虚拟机可能会选择运行<code>finalizers</code>，然后再终止。java虚拟机不会去尝试停止或中断任何在应用关闭时仍然在运行的应用线程；当java虚拟机停止时他们将突然地终结掉。如果shundown钩子或者<code>finalizer</code>无法完成，那么有序的关闭过程将”挂起“，java虚拟机一定会突然地关闭。在突然地关闭时，java虚拟机不要求做任何除了停止虚拟机之外的事；shutdown钩子将不会运行。</p>
+<p>shutdown钩子应该是线程安全的；当访问共享数据时，它们必须使用同步机制，并且要防止死锁，就像任何别的并发代码一样。而且，它们不应该对应用的状态（例如其它服务是否已经关闭或者所有的普通线程已经完成）或者java虚拟机的关闭的原因作出假设，并且因此应该被极其小心地编写。最后，它们应该尽可能快的退出，因为它们的存在推迟了java虚拟机的终止，此时用户也许正在等待java虚拟机快点终止。</p>
+<p>shutdown hooks可以被用来做服务或者应用的清理工作，例如删除临时文件或者清理那些不能被操作系统自动关闭的资源。<a href="">Listing 7.26</a>展示了<a href="">Listing 7.16</a>中的<code>LogService</code>是怎样通过在它的<code>start</code>方法中注册一个shutdown钩子来确保退出时关闭日志文件。</p>
+<p>因为shutdown钩子全部并发运行，关闭日志文件可能会影响到一些其他的想使用该<code>logger</code>的shutdown钩子。为了避免这个问题，shutdown钩子不能依赖那些可能被应用或者别的shutdown钩子关闭的服务。达到这一目的的一种方式是使用一个钩子来关闭所有待关闭的服务，而不是为每个待关闭的服务都创建一个钩子，让它来调用一系列的关闭动作。这确保了关闭动作能在一个单一的线程中顺序地执行，因此避免了关闭动作间的竞态条件或者死锁。无论你是否使用shutdown钩子，这一技巧都可以使用。顺序地而不是并发地执行关闭动作消除了大量潜在的可能导致失败的源头。在一个需要需要维护众多服务间显式的依赖信息的应用中，该技巧可以确保shutdown动作可以以正确的顺序执行。</p>
+<h3 id="Listing-7-26-注册一个关闭Hook来阻止Logging服务"><a href="#Listing-7-26-注册一个关闭Hook来阻止Logging服务" class="headerlink" title="Listing 7.26. 注册一个关闭Hook来阻止Logging服务"></a>Listing 7.26. 注册一个关闭Hook来阻止Logging服务</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">public void start()&#123;</span><br><span class="line">	Runtime.getRuntime().addShutdownHook(new Thread()&#123;</span><br><span class="line">		public void run()&#123;</span><br><span class="line">			try&#123;</span><br><span class="line">				LogService.this.stop();</span><br><span class="line">			&#125;catch(InterruptedException ignored)</span><br><span class="line">			&#123;&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="7-4-2守护线程"><a href="#7-4-2守护线程" class="headerlink" title="7.4.2守护线程"></a>7.4.2守护线程</h2><p>有时候你想要创建一个线程来执行一些帮助功能但是你不想这个线程的存在阻止到java虚拟机的关闭。这就是守护线程的所要做的。</p>
+<p>线程分为两种类型：普通线程和守护线程。当java虚拟机启动时，它创建的所有线程，除了主线程，都是守护线程（诸如垃圾回收线程，其他的管理线程）。当一个线程被创建时，它默认继承创建它的线程的守护状态，所以默认情况下，主线程创建的任何线程也都是普通线程。</p>
+<p>普通线程和守护线程的唯一不同就是当他们退出时会发生什么。当一个线程退出时，java虚拟机会执行一个正在运行的线程的清单动作，如果剩下的所有线程都是守护线程，它会发起一个有序的关闭。当java虚拟机终止，任何剩下的守护线程都被废弃——finally块不会执行，栈不会解除——java虚拟机仅仅退出。</p>
+<p>守护线程应该少量使用——能随时放弃而不需要清理的正在处理中的活动很少。特别是使用守护线程来执行那些可能会执行I/O操作的任务是非常危险的。守护线程最好仅用于一些“家务管理”任务，诸如一个周期性地从缓存中移除过期的条目的后台线程。</p>
+<blockquote>
+<p>守护线程不适宜管理应用中的一些服务的生命周期。</p>
+</blockquote>
+<h2 id="7-4-3终结者"><a href="#7-4-3终结者" class="headerlink" title="7.4.3终结者"></a>7.4.3终结者</h2><p>垃圾收集线程能够很好地回收那些不再需要的内存资源，但是一些资源，诸如文件或者套接字句柄，当不再需要时，必须显式地归还给操作系统。为了能够帮助回收这些资源，垃圾收集线程对那些拥有非平凡的<code>finalize</code>方法的对象特殊对待：当它们被垃圾回收线程回收后，<code>finalize</code>方法将被调用来释放那些持久化资源。<br>既然<code>finalizer</code>可以运行在一个由java虚拟机管理的线程中，任务能够被一个<code>finalizer</code>访问的状态将会被不止一个线程访问，因此它们必须通过同步机制来访问。<code>Finalizers</code>不能保证它们什么时候运行，甚至无法保证它们是否会运行，并且它们致使那些带有非平台的<code>finalize</code>方法的对象有很大的性能开销。正确地编写它们也极其困难<a href="">9待完善的链接</a>。大多数情况下，<code>finally</code>块和显式地<code>close</code>方法的结合能够比<code>finalizer</code>更好的管理资源；唯一的例外是当你需要管理那些持有通过本地方法获取到的资源的对象。基于这些原因及别的因素，尽量避免写或者使用带有<code>finializers</code>的类（除了平台类库中的类）。</p>
+<blockquote>
+<p>避免Finalizers.</p>
+</blockquote>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>任务，线程，服务，应用程序的生命周期结束问题可能会增加设计及实现它们的复杂度。Java没有提供抢占式的机制来取消活动或者终止线程。相反，它提供了一种协作式的中断机制，可以被用来取消任务，但是构建任务取消的协议及一致地使用这些协议完全由你来决定。使用FutureTask及Executor框架简化了能够被取消的任务和服务的构造工作。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://w2l.com/2018/05/05/7.4关闭java虚拟机/" data-id="cjgt7nwt60005i4g58i1rcg8x" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-7.3 线程异常终止的处理" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/05/05/7.3 线程异常终止的处理/" class="article-date">
+  <time datetime="2018-05-05T09:53:47.191Z" itemprop="datePublished">2018-05-05</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/05/05/7.3 线程异常终止的处理/">7.3线程异常终止的处理</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="7-3线程异常终止的处理"><a href="#7-3线程异常终止的处理" class="headerlink" title="7.3线程异常终止的处理"></a>7.3线程异常终止的处理</h1><p>当一个单线程的控制台应用程序因为一个未被捕获的异常而终止时是很显然的————该程序停止运行，输出与正常的程序输出不同的堆栈。在并发应用程序中，一个线程的失败并不总是显而易见的。堆栈可能会打印到控制台，但是可能没人一直盯着控制台。此外，当一个线程失败时，应用可能看起来继续在工作，因而该线程的失败可能没人注意到。幸运的是，我们有检测和阻止线程从一个多线程应用中泄露的方法。<br>导致线程过早死亡的主要原因是运行时异常。因为这些异常表明一个程序错误或者其它不可修复的错误，它们一般不被捕获。相反，它们沿着调用栈一路向上传播，缺省的行为通常是在某个地方将异常堆栈打印到控制台，终止线程的执行。<br>线程异常死亡的后果可能是良性的，也可能是灾难性的，取决于线程在应用中扮演的角色。一个线程池失去一个线程可能会影响性能，但是一个在拥有50个线程的线程池下运行良好的应用很大可能也能在该线程池拥有49个线程的的情况下运行的不错。但是一个图形用户界面的应用如果失去了事件分发线程将非常引人注目————该应用将会停止处理事件，应用界面冻住。124页的OutOfTime向我们展示了线程泄露的严重后果：由Timer表示的服务将永远不会执行。<br>任何代码都有可能抛出一个运行时异常。无论何时你调用别的方法，你是在相信该方法将会正常返回，或者抛出一个它的方法签名中所声明的受检异常。你越是不熟悉正在被调用的代码，你越应该对它的行为保持怀疑。<br>像线程池中的工作线程或是在Swing框架中的事件分发线程这样的任务处理线程，它们的整个生命周期一直在调用未知代码，通过像Runnable这样的抽象封装接口，这些线程应该对它们调用的代码良好运行持怀疑态度。如果一个服务，如Swing事件线程，仅仅因为写得糟糕的事件处理器抛出一个运行时异常而挂掉就不太好。因此，这些服务<br>设施应该在一个捕获非受检异常的try-catch块中调用任务，或者在一个try-finally块中，确保当线程异常退出时，框架能够被告知到，从而能够采取一些正确的行动。这是仅有的几次你可能想要考虑捕获运行时异常的时机之一———当你调用通过像Runnable这样接口抽象的未知的，无法信任的代码时。<br><a href="">Listing7.2.3</a>举例说明了一种构建线程池中的工作线程的方式。如果一个任务抛出了一个不受检的异常，它允许线程死亡，但是在此之前必须向外部运行框架发出线程已经死亡的通知。该运行框架可能创建一个新的线程来替换该工作线程，或者因为该线程池正在关闭，又或者因为该线程池中已有足够的线程来满足当前的需求而选择不去替换。线程池执行器和Swing使用这一技术来确保一个表现糟糕的任务不会阻止后面的任务的执行。如果你正在写一个工作者线程类来执行提交过来的任务，或者调用一些无法信任的外部代码，诸如动态加载的插件，使用这些方法中的一种来避免线程因为碰巧调用一个写得很糟糕的任务或者插件挂掉。</p>
+<h3 id="Listing-7-2-3-典型的线程池工作线程的结构"><a href="#Listing-7-2-3-典型的线程池工作线程的结构" class="headerlink" title="Listing 7.2.3 典型的线程池工作线程的结构"></a>Listing 7.2.3 典型的线程池工作线程的结构</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">public void run()&#123;</span><br><span class="line">  Throwable thrown=null;</span><br><span class="line">  try&#123;</span><br><span class="line">    while(!isInterrupted)&#123;</span><br><span class="line">      runTask(getTaskFromWorkQueue());</span><br><span class="line">    &#125;catch(Throwable e)&#123;</span><br><span class="line">      thrown=e;</span><br><span class="line">    &#125;finally&#123;</span><br><span class="line">      threadExited(this,thrown);</span><br><span class="line">    &#125;</span><br><span class="line">  </span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="7-3-1未被捕获的异常的处理器"><a href="#7-3-1未被捕获的异常的处理器" class="headerlink" title="7.3.1未被捕获的异常的处理器"></a>7.3.1未被捕获的异常的处理器</h2><p>前面提供了一种主动的方式来应对非受检异常导致线程过早死亡的问题。线程类API也提供了UncaughtExceptionHandler机制，该机制能够让你检测到线程因为一个非受检异常死亡。这两种方式是互补的：同时使用两者，能够提供对线程泄露的更深层防御。当一个线程由于一个未被捕获的异常而退出时，java虚拟机将这一事件报告给一个应用程序范围内的UncaughtExceptionHandler（见 7.24）;如果该handler不存在，默认将会把线程调用栈打印到系统标准错误流。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">### Listing 7.24 UncaughtExceptionHandler Interface</span><br><span class="line">public interface UncaughtExceptionHandler&#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>该handler应该对一个未被捕获的异常做些什么取决于你的服务的质量要求。最通用的反应是像Listing 7.25所示那样将错误信息及发生异常时的该线程的方法调用栈输出到应用程序的日志中。Handlers也可以采取一些更直接的动作，诸如试着去重启线程，关闭该应用，paging an operator,或者别的一些正确或者诊断性的动作。</p>
+<h3 id="Listing-7-25-记录异常的UncaughtExceptionHandler"><a href="#Listing-7-25-记录异常的UncaughtExceptionHandler" class="headerlink" title="Listing 7.25 记录异常的UncaughtExceptionHandler"></a>Listing 7.25 记录异常的UncaughtExceptionHandler</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">public class UEHLogger implements Thread.UncaughtExceptionHandler&#123;</span><br><span class="line">  public void uncaughtException(Thread t,Throwable e)&#123;</span><br><span class="line">    Logger logger=Logger.getAnonymousLogger();</span><br><span class="line">    logger.log(Level.SEVERE,&quot;Thread terminated with exception :&quot;+t,getName(),e);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在一个长时间运行的应用中，总是为所有的线程使用至少记录下该异常的未被捕获的异常的处理者。</p>
+<p>可以通过提供一个ThreadFactory给线程池构造器，来为线程池中的线程设置一个UncaughtExceptionHandler。（和所有的线程操作一样，只有线程的拥有者应该改变它的UncaughtExceptionHandler。)标准的线程池允许一个未被捕获的任务异常终结线程池中的线程，但是使用一个try-finally块来通知线程池这一事件发生，以便该线程能够被替代。如果没用未被捕获异常处理器或者采取别的失败通知机制，任务可能会悄无声息地失败，这将令人感到困惑。如果你想要在一个任务由于异常而导致失败时收到该任务失败的通知，以便你能够采取一些特定于任务的恢复行动，你可以使用捕获异常的Runnable或者Callable接口包装任务或者覆写ThreadPoolExecutor类中的afterExecute()钩子方法。</p>
+<p>有点令人困惑的是，任务抛出的异常交由UncaughtExceptionHandler处理，只对那些通过execute方法提交的任务有效。对那些通过submit方法提交的任务,任何抛出的异常，无论是受检的异常还是不受检的异常，将被视作任务的返回状态的一部分。如果一个通过submit方法提交的任务由于一个异常终结，该异常将被包裹进一个ExecutionException，通过future的get方法重新抛出。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://w2l.com/2018/05/05/7.3 线程异常终止的处理/" data-id="cjgt7nwsp0003i4g52r2idie5" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-7.2停止一个基于线程的服务" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/05/05/7.2停止一个基于线程的服务/" class="article-date">
+  <time datetime="2018-05-05T09:53:47.167Z" itemprop="datePublished">2018-05-05</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/05/05/7.2停止一个基于线程的服务/">停止一个基于线程的服务</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="7-2-停止一个基于线程的服务"><a href="#7-2-停止一个基于线程的服务" class="headerlink" title="7.2. 停止一个基于线程的服务"></a>7.2. 停止一个基于线程的服务</h1><p>应用程序通常会创建一些拥有线程的服务，例如线程池，这些服务的生存时间通常要比创建这些服务的方法的生命要长。如果应用程序以优雅的方式关闭，这些服务所拥有的线程应该被终止。既然java中没有抢占式地中断线程的途径，那么这些线程必须被劝服主动关闭自己。<br>合理的封装实践强行规定除非你拥有该线程，否则你不应该操纵一个线程，——中断它，修改它的优先级，等等。线程API文档没有关于线程所有权的正式概念：一个线程通过一个Thread对象来表示，该Thread对象能够像别的对象一样自由地共享。然而，认为一个线程有一个主人是有道理的，这个主人通常就是创建该线程的那个类。所以一个线程池拥有它的工作者线程，如果这些工作者线程需要被中断，线程池应该对此负责。<br>和其他被封装的对象一样，线程的所有权不可传递：应用程序可能拥有某个服务，该服务拥有工作者线程，但是应用程序不拥有那些工作者线程，因此不应该试图直接停止线程。相反，服务应该提供关闭自己的生命周期方法，该方法同时关闭服务拥有的那些线程；这样应用程序可以关闭服务，服务可以关闭线程。ExecutorService提供了<code>shutdown</code>方法和<code>shutdownNow</code>方法;其它的拥有线程的服务应该提供一个类似的关闭机制。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">当一个拥有线程的服务比创建该服务的方法的生命要长，请提供一个生命周期方法。</span><br></pre></td></tr></table></figure></p>
+<h2 id="7-2-1-例子：一个日志服务"><a href="#7-2-1-例子：一个日志服务" class="headerlink" title="7.2.1.例子：一个日志服务"></a>7.2.1.例子：一个日志服务</h2><p>大多数的服务端程序使用日志服务,简单的日志服务可以是在代码中插入println方法。像PrintWriter这样的Stream类是线程安全的，所以这种简单的方式将不要求使用显式的同步机制。然而，在<a href="">11.6节</a>我们将看到，内嵌的日志服务在高流量的应用中可能会带来性能问题。替代的方案是将对log方法的调用来将要记录的日志信息插入一个队列中，交由另外的线程来处理该队列的日志信息。</p>
+<p><a href="">Listing 7.13</a>中LogWriter展示了一个简单的日志服务，在该服务中，日志活动被转移到一个分开的日志线程中。LogWriter将要记录的消息通过一个BlockingQueue来传递给日志线程，然后由该日志线程将消息写到输出流中，而不是让产生日志信息的线程直接写到输出流中。这是一种多个生产者，一个消费者的设计：任何调用log方法的活动将扮演生产者，后台的logger线程是消费者。如果logger线程落后于生产者，BlockingQueue将最终阻塞生产者直到logger线程赶上生产者的产生日志消息进度。</p>
+<h3 id="Listing7-13-没有shutdown支持的生产者-消费者模式的日志记录服务"><a href="#Listing7-13-没有shutdown支持的生产者-消费者模式的日志记录服务" class="headerlink" title="Listing7.13. 没有shutdown支持的生产者-消费者模式的日志记录服务"></a>Listing7.13. 没有shutdown支持的生产者-消费者模式的日志记录服务</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">public class LogWriter&#123;</span><br><span class="line">	private final BlockingQueue&lt;String&gt; queue;</span><br><span class="line">	private final LoggerThread logger;</span><br><span class="line">	public LogWriter(Writer writer)&#123;</span><br><span class="line">		this.queue=new LinkedBlockingQueue&lt;String&gt;(CAPACITY);</span><br><span class="line">		this.logger=new LoggerThread(writer);</span><br><span class="line">	&#125;</span><br><span class="line">	public void start()&#123;</span><br><span class="line">		logger.start();</span><br><span class="line">	&#125;</span><br><span class="line">	public vlid log(String msg) throws InterruptedException&#123;</span><br><span class="line">		queue.put(msg);</span><br><span class="line">	&#125;</span><br><span class="line">	private class LoggerThread extends Thread&#123;</span><br><span class="line">		private final PrintWriter writer;</span><br><span class="line">		...</span><br><span class="line">		public void  run()&#123;</span><br><span class="line">			try&#123;</span><br><span class="line">				while(true)&#123;</span><br><span class="line">					writer.println(queue.take());</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;catch(InterruptedException ignored)&#123;</span><br><span class="line">			&#125;finally&#123;</span><br><span class="line">				writer.close();</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在生产中，像LogWriter这样的服务将会很有用，我们需要一种方式来终止logger线程，以便它不会阻止java虚拟机的正常关闭。停止logger线程是很简单的，因为它反复地调用take方法，而该方法能够响应中断。如果logger线程被修改为当捕获到InterruptedException异常就退出，那么中断logger线程就停止了该服务。<br>然而，仅仅让logger线程退出不是一个很让人满意的关闭机制。这些一种突然的关闭丢弃了那些可能正在等待输出到日志文件的日志信息，更重要的是，那些因为队列满而阻塞在log方法调用中的线程将永远不会从阻塞状态中解除。取消一个生产者消费者活动要求同时取消生产者和消费者。中断logger线程取消了消费者，但是因为在这个例子中生产者不是专门的线程，很难取消它们。</p>
+<p>另外一种关闭LogWriter的方式是像<a href="">Listing 7.14.</a>中展示的那样，设置一个“关闭被请求”的标志来阻止后面的日志消息的提交。这样消费者线程可以在被告知shutdown被请求时，将队列提取为空，将任何待输出的消息输出，解除任何阻塞在log方法调用中的生产者线程的阻塞状态。然而，这种方式有一个使它不可靠的竞态条件。log的实现是一种check-then-act序列：生产者可能观察到服务还未被关闭，在服务被关闭之后仍然提交信息到队列中，生产者可能会再次阻塞在log方法的调用中，并且永远不会变回未阻塞状态。我们有办法降低这种风险发生的可能性（例如让消费者在生明队列为空之前等待几秒），但是这些方式不能改变这一问题的本质，仅仅是降低了它造成失败的可能性。</p>
+<h3 id="Listing7-14-一种向日志服务添加关闭支持的不可靠的实现方式"><a href="#Listing7-14-一种向日志服务添加关闭支持的不可靠的实现方式" class="headerlink" title="Listing7.14 一种向日志服务添加关闭支持的不可靠的实现方式"></a>Listing7.14 一种向日志服务添加关闭支持的不可靠的实现方式</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">public void log(String msg) throws InterruptException&#123;</span><br><span class="line">	if(!shutdownRequested)&#123;</span><br><span class="line">		queue.put(msg);</span><br><span class="line">	&#125;else&#123;</span><br><span class="line">		throw new IllegalStateException(&quot;logger is shutdown&quot;);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>通过解决竞态条件来为LogWriter提供一种可靠的关闭，这意味着将一个新的日志信息的提交做成原子类型的。但是我们不想在试图将一个日志信息入队时持有一个锁，因为put方法会阻塞。相反，我们可以像<a href="">Listing7.15.</a>中展示的那样，原子性地检查shutdown请求，条件式地增加一个计数器来“保留”提交日志信息的权利。</p>
+<h3 id="Listing-7-15-为LogWriter添加一种可靠的取消机制"><a href="#Listing-7-15-为LogWriter添加一种可靠的取消机制" class="headerlink" title="Listing 7.15. 为LogWriter添加一种可靠的取消机制"></a>Listing 7.15. 为LogWriter添加一种可靠的取消机制</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line">public class LogService&#123;</span><br><span class="line">	private final BlockingQueue&lt;String&gt;  queue;</span><br><span class="line">	private final LoggerThread loggerThread;</span><br><span class="line">	private final PrintWriter writer;</span><br><span class="line">	@GuardBy(&quot;this&quot;)private boolean isShutdown;</span><br><span class="line">	@GuradBy(&quot;this&quot;)private int reservations;</span><br><span class="line">	public void start()&#123;</span><br><span class="line">		loggerThread.start();</span><br><span class="line">	&#125;</span><br><span class="line">	public void stop()&#123;</span><br><span class="line">		synchronized(this)&#123;</span><br><span class="line">			isShutdown=true;</span><br><span class="line">		&#125;</span><br><span class="line">		loggerThread.interrupt();</span><br><span class="line">	&#125;</span><br><span class="line">	public void log(String msg) throws InterruptedException&#123;</span><br><span class="line">		synchronized(this)&#123;</span><br><span class="line">			if(isShutdown)&#123;</span><br><span class="line">				throw new IllegalStateException(...);	</span><br><span class="line">			&#125;</span><br><span class="line">			++reservations;</span><br><span class="line">		&#125;</span><br><span class="line">		queue.put(msg);</span><br><span class="line">	&#125;</span><br><span class="line">	private Class  LoggerThread extends Thread&#123;</span><br><span class="line">		public void run()&#123;</span><br><span class="line">			try&#123;</span><br><span class="line">				while(true)&#123;</span><br><span class="line">					try&#123;</span><br><span class="line">						synchronized(LogService.this)&#123;</span><br><span class="line">							if(isShutdown&amp;&amp;reservations==0)&#123;</span><br><span class="line">								break;</span><br><span class="line">							&#125;</span><br><span class="line">						&#125;</span><br><span class="line">						String msg=queue.take();</span><br><span class="line">						synchronized(LogService.this)&#123;</span><br><span class="line">							--reservations;</span><br><span class="line">						&#125;</span><br><span class="line">						writer.println(msg);</span><br><span class="line">					&#125;catch(InterruptedException e)&#123;</span><br><span class="line">						/*retry*/</span><br><span class="line">					&#125;</span><br><span class="line">					</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;finally&#123;</span><br><span class="line">				writer.close();</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>##7.2.2. ExecutorService的关闭<br>在<a href="">6.2.4节</a>，我们看到，ExecutorService提供了两种关闭的方式：使用shutdown方法优雅地关闭，使用shutdownNow突然地关闭。以突然地方式关闭时，shutdownNow方法会在试图取消所有正在执行的任务后返回一个列表，该列表包含那些还未开始的任务。</p>
+<p>这两种不同的终止选择提供了安全与相应性之间的取舍：突然地关闭更快但是风险更大，因为任务可能在执行的途中被打断，正常的关闭相对较慢但是更安全，因为ExecutorService会等到所有已经入队的任务都被处理完才关闭。其他的拥有线程的服务应该考虑提供一种类似的关闭模式的选择。</p>
+<p>简单的程序可能侥幸从主线程中启动和关闭一个全局的ExecutorService。更负杂的程序很可能在一个更高级别的服务中封装一个ExecutorService,提供它自己的生命周期方法，例如在<a href="">Listing 7.16</a>中LogService的变种将线程的管理委托给一个ExecutorService，而不是自己管理自己所拥有的线程。封装一个ExecutorService通过增加一个链接的方式延伸了从应用到服务到线程的所有权链；该链上的每个成员管理它们拥有的服务或者线程的生命周期。</p>
+<h3 id="Listing7-16-Logging-Service-that-Uses-an-ExecutorService"><a href="#Listing7-16-Logging-Service-that-Uses-an-ExecutorService" class="headerlink" title="Listing7.16. Logging Service that Uses an ExecutorService"></a>Listing7.16. Logging Service that Uses an ExecutorService</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">public class LogService&#123;</span><br><span class="line">	private final ExecutorService exec=newSingleThreadExecutor();</span><br><span class="line">	...</span><br><span class="line">	public void start()&#123;&#125;</span><br><span class="line">	public void stop() throws InterruptedException&#123;</span><br><span class="line">		try&#123;</span><br><span class="line">			exec.shutdown();</span><br><span class="line">			exec.awaitTermination(TIMEOUT,UNIT);</span><br><span class="line">		&#125;finally&#123;</span><br><span class="line">			writer.close();</span><br><span class="line">	  	&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	public void log(String msg)&#123;</span><br><span class="line">		try&#123;</span><br><span class="line">			exec.execute(new WriteTask(msg));</span><br><span class="line">		&#125;catch(RejectedExecution ignored)&#123;</span><br><span class="line">		&#125;</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="7-2-3-Poison-Pills"><a href="#7-2-3-Poison-Pills" class="headerlink" title="7.2.3.Poison Pills"></a>7.2.3.Poison Pills</h2><p>另一种说服生产者——消费者模式服务关闭的方式是使用一个毒药片：一个被放置在队列中能够被识别的对象，表示着当你拿到它时，停止。在一个先进先出的队列中，毒药片确保了消费者们在服务关闭之前能够完成它们队列中的工作，因为任何在提交毒药片之前提交的任务都将在毒药片前面取出；生产者不应该在将毒药片放进队列中后在提交任何工作。<a href="">Listings 7.17</a>,<a href="">7.18</a>和<a href="">7.19</a>中的IndexingService展示了91页的<a href="">Listing 5.8</a>中的桌面搜索例子的一个单个生产者，单个消费者版本，该版本使用一个毒药片来关闭服务。</p>
+<h3 id="Listing7-17-Shutdown-with-Poison-Pill"><a href="#Listing7-17-Shutdown-with-Poison-Pill" class="headerlink" title="Listing7.17. Shutdown with Poison Pill."></a>Listing7.17. Shutdown with Poison Pill.</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">public class IndexingService &#123;</span><br><span class="line">	private static final File POISON=new File(&quot;&quot;);</span><br><span class="line">	private final IndexerThread consumer=new IndexerThread();</span><br><span class="line">	private final CrawlerThread producer=new CrawlerThread();</span><br><span class="line">	private final BlockingQueue&lt;File&gt; queue;</span><br><span class="line">	private final FileFilter fileFilter;</span><br><span class="line">	private final File root;</span><br><span class="line">	class IndexerThread extends Thread&#123;</span><br><span class="line">		/*Listing 7.18*/</span><br><span class="line">	&#125;</span><br><span class="line">	class CrawlerThread extends Thread&#123;</span><br><span class="line">		/*Listing 7.19*/</span><br><span class="line">	&#125;</span><br><span class="line">	public void start()&#123;</span><br><span class="line">		producer.start();</span><br><span class="line">		consumer.start();</span><br><span class="line">	&#125;</span><br><span class="line">	public void stop()&#123;</span><br><span class="line">		producer.interrupt();</span><br><span class="line">	&#125;</span><br><span class="line">	public void awaitTermination() throws InterruptedException&#123;</span><br><span class="line">		consumer.join();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="Listing-7-18-Producer-Thread-for-IndexingService"><a href="#Listing-7-18-Producer-Thread-for-IndexingService" class="headerlink" title="Listing 7.18. Producer Thread for IndexingService."></a>Listing 7.18. Producer Thread for IndexingService.</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">public class CrawlerThread extends Thread&#123;</span><br><span class="line">	public void run()&#123;</span><br><span class="line">		try&#123;</span><br><span class="line">			crawl(root);</span><br><span class="line">		&#125;catch(InterruptedException e)&#123;</span><br><span class="line">			/*fall through */</span><br><span class="line">		&#125;finally&#123;</span><br><span class="line">			while(true)&#123;</span><br><span class="line">				try&#123;</span><br><span class="line">					queue.put(POISON);</span><br><span class="line">					break;</span><br><span class="line">				&#125;catch(InterruptedException e1)&#123;</span><br><span class="line">					/*retry*/</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	private void crawl(File root) throws InterruptedException&#123;</span><br><span class="line">		...</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="Listing-7-19-Consumer-Thread-for-IndexingService"><a href="#Listing-7-19-Consumer-Thread-for-IndexingService" class="headerlink" title="Listing 7.19. Consumer Thread for IndexingService"></a>Listing 7.19. Consumer Thread for IndexingService</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">public class IndexerThread extends Thread&#123;</span><br><span class="line">	public void run()&#123;</span><br><span class="line">		try&#123;</span><br><span class="line">			while(true)&#123;</span><br><span class="line">				File file=queue.take();</span><br><span class="line">				if(file==POISON）&#123;</span><br><span class="line">					break;</span><br><span class="line">				&#125;else&#123;</span><br><span class="line">					indexFile(file);</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;catch(InterruptedException consumed)&#123;</span><br><span class="line">			</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>毒药片这种方式尽在生产者和消费者的数量是知道的这种情况下有效。IndexingService中的那种方式可以扩展成多个生产者，每个生产者向队列中放置一个毒药片，让消费者只在它接收到N（生产者的数量）个毒药片时停止。它也能扩展成多个消费者，通过让每个生产者放置N个毒药片到队列中，尽管在拥有大量的生产者和消费者的情况下这中方式可能显得笨重。毒药片只能在无界队列的情况下可靠工作。</p>
+<h2 id="7-2-4-Example-一个执行一次的Execution-Service"><a href="#7-2-4-Example-一个执行一次的Execution-Service" class="headerlink" title="7.2.4 Example:一个执行一次的Execution Service"></a>7.2.4 Example:一个执行一次的Execution Service</h2><p>如果一个方法需要处理一批任务，并且直到所有的任务完成后才返回，它可以通过使用一个私有的Executor来简化服务的生命周期的管理，该Executor的生命周期和那个方法绑定在一起。（在这种场景下，invokeAll方法和invokeAny方法通常可能很有用）。</p>
+<p><a href="">Listing 7.20</a>中的checkMail方法平行地查询众多主机中的新邮件。它创建了一个私有的Executor，为每台主机提交一个任务：它然后关闭该executor，等待终结，当所有的检查邮件的任务都完成后executor就会终结。</p>
+<p>###Listing 7.20. Using a Private Executor Whose LifeTime is Bounded by a Method Call<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">boolean checkMail(Set&lt;String&gt; hosts,long timeout,TimeUnit unit) throws InterruptedException&#123;</span><br><span class="line">	ExecutorService exec=Executors.newCachedThreadPool();</span><br><span class="line">	final AtomicBoolean hasNewMail=new AtomicBoolean(false);</span><br><span class="line">	try&#123;</span><br><span class="line">		for(final String host:hosts)&#123;</span><br><span class="line">			exec.execute(new Runnable()&#123;</span><br><span class="line">				public void run()&#123;</span><br><span class="line">					if(checkedMail(host)&#123;</span><br><span class="line">						hasNewMail.set(true);</span><br><span class="line">					&#125;</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;;</span><br><span class="line">		&#125;	</span><br><span class="line">	&#125;finally&#123;</span><br><span class="line">		exec.shutdown();</span><br><span class="line">		exec.awaitTermination(timeout,unit);</span><br><span class="line">	&#125;</span><br><span class="line">	return hasNewMail.get();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="7-2-5-shutdownNow方法的限制条件"><a href="#7-2-5-shutdownNow方法的限制条件" class="headerlink" title="7.2.5. shutdownNow方法的限制条件"></a>7.2.5. shutdownNow方法的限制条件</h2><p>当一个ExecutorService通过调用shutdownNow方法来突然的关闭时，它会尝试取消当前正在处理中的任务，并返回一个任务列表集合，该列表集合中包含了那些已经提交当还未开始执行的任务以便这样任务可以记录到日志中或者保存下来留待以后的处理。</p>
+<p>然而，这里没有通用的方法来找出哪个任务启动了但是还未完成。这意味着我们无法在ExecutorService关闭时获知正在处理中的任务的状态除非任务自身执行某种检查点操作。为了获知哪些任务未完成，你不仅仅需要知道哪些任务没有开始，还要知道当executor关闭时哪些任务正在处理中。</p>
+<p><a href="">Listing7.21</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://w2l.com/2018/05/05/7.2停止一个基于线程的服务/" data-id="cjgt7nwsa0002i4g5qxxyeyyz" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-我的第一篇博客" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/05/05/我的第一篇博客/" class="article-date">
+  <time datetime="2018-05-05T09:37:09.542Z" itemprop="datePublished">2018-05-05</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/05/05/我的第一篇博客/">Introduce to MarkdownPad 2</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="Welcome-to-MarkdownPad-2"><a href="#Welcome-to-MarkdownPad-2" class="headerlink" title="Welcome to MarkdownPad 2"></a>Welcome to MarkdownPad 2</h2><p><strong>MarkdownPad</strong> is a full-featured Markdown editor for Windows.</p>
+<h3 id="Built-exclusively-for-Markdown"><a href="#Built-exclusively-for-Markdown" class="headerlink" title="Built exclusively for Markdown"></a>Built exclusively for Markdown</h3><p>Enjoy first-class Markdown support with easy access to  Markdown syntax and convenient keyboard shortcuts.</p>
+<p>Give them a try:</p>
+<ul>
+<li><strong>Bold</strong> (<code>Ctrl+B</code>) and <em>Italic</em> (<code>Ctrl+I</code>)</li>
+<li>Quotes (<code>Ctrl+Q</code>)</li>
+<li>Code blocks (<code>Ctrl+K</code>)</li>
+<li>Headings 1, 2, 3 (<code>Ctrl+1</code>, <code>Ctrl+2</code>, <code>Ctrl+3</code>)</li>
+<li>Lists (<code>Ctrl+U</code> and <code>Ctrl+Shift+O</code>)</li>
+</ul>
+<h3 id="See-your-changes-instantly-with-LivePreview"><a href="#See-your-changes-instantly-with-LivePreview" class="headerlink" title="See your changes instantly with LivePreview"></a>See your changes instantly with LivePreview</h3><p>Don’t guess if your <a href="http://markdownpad.com" target="_blank" rel="noopener">hyperlink syntax</a> is correct; LivePreview will show you exactly what your document looks like every time you press a key.</p>
+<h3 id="Make-it-your-own"><a href="#Make-it-your-own" class="headerlink" title="Make it your own"></a>Make it your own</h3><p>Fonts, color schemes, layouts and stylesheets are all 100% customizable so you can turn MarkdownPad into your perfect editor.</p>
+<h3 id="A-robust-editor-for-advanced-Markdown-users"><a href="#A-robust-editor-for-advanced-Markdown-users" class="headerlink" title="A robust editor for advanced Markdown users"></a>A robust editor for advanced Markdown users</h3><p>MarkdownPad supports multiple Markdown processing engines, including standard Markdown, Markdown Extra (with Table support) and GitHub Flavored Markdown.</p>
+<p>With a tabbed document interface, PDF export, a built-in image uploader, session management, spell check, auto-save, syntax highlighting and a built-in CSS management interface, there’s no limit to what you can do with MarkdownPad.</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://w2l.com/2018/05/05/我的第一篇博客/" data-id="cjgt7dm850001i4g5z50cg0wd" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-hello-world" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/05/05/hello-world/" class="article-date">
+  <time datetime="2018-05-05T07:47:05.529Z" itemprop="datePublished">2018-05-05</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/05/05/hello-world/">Hello World</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
+<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
+<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
+<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p>
+<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="noopener">Deployment</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://w2l.com/2018/05/05/hello-world/" data-id="cjgt7dm7z0000i4g5sfxkszm2" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2018/05/05/7.1任务的取消/">任务的取消</a>
+          </li>
+        
+          <li>
+            <a href="/2018/05/05/7.4关闭java虚拟机/">java虚拟机的关闭</a>
+          </li>
+        
+          <li>
+            <a href="/2018/05/05/7.3 线程异常终止的处理/">7.3线程异常终止的处理</a>
+          </li>
+        
+          <li>
+            <a href="/2018/05/05/7.2停止一个基于线程的服务/">停止一个基于线程的服务</a>
+          </li>
+        
+          <li>
+            <a href="/2018/05/05/我的第一篇博客/">Introduce to MarkdownPad 2</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 chenzan<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>
